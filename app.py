@@ -1,20 +1,21 @@
 import os
 import requests
 import streamlit as st
+import openai
 from dotenv import find_dotenv, load_dotenv
-from hugchat import hugchat
-from hugchat.login import Login
 from transformers import pipeline
 
 load_dotenv(find_dotenv())
-
-HUGGINGFACEHUB_API_TOKEN = os.environ['HUGGINGFACEHUB_API_TOKEN']
+OPENAI_API_KEY = "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"
+openai.api_key=OPENAI_API_KEY
+HUGGINGFACEHUB_API_TOKEN = "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"
 
 
 def img2text(url):
     image_to_text = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
 
     text = image_to_text(url)[0]['generated_text']
+    print(text)
     return text
 
 
@@ -26,13 +27,16 @@ def generate_story(scenario):
     CONTEXT: {scenario}
     STORY:
     """
-    # Create a ChatBot
-    chatbot = hugchat.ChatBot(cookies=cookies.get_dict())  # or cookie_path="usercookies/<email>.json"
-    story = chatbot.chat(template)
+    story = openai.Completion.create(
+        model= "text-davinci-003",
+        max_tokens=300,
+        temperature= 1,
+        prompt= template,
+        stop=None
+    )["choices"][0]["text"]
 
     print(story)
     return story
-
 
 # text to speech
 def text2speech(message):
@@ -45,14 +49,6 @@ def text2speech(message):
     response = requests.post(url=api_url, headers=headers, json=payloads)
     with open('audio.flac', 'wb') as file:
         file.write(response.content)
-
-
-# Log in to huggingface and grant authorization to huggingchat
-sign = Login("vikramramji24@gmail.com", "jV9wy4FVKm4iAxG")
-cookies = sign.login()
-
-# Save cookies to usercookies/<email>.json
-sign.saveCookies()
 
 
 def main():
