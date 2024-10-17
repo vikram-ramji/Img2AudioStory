@@ -14,7 +14,6 @@ def img2text(url):
     image_to_text = pipeline("image-to-text", model="Salesforce/blip-image-captioning-base")
 
     text = image_to_text(url)[0]['generated_text']
-    print(text)
     return text
 
 
@@ -34,7 +33,6 @@ def generate_story(scenario):
         stop=None
     )["choices"][0]["text"]
 
-    print(story)
     return story
 
 # text to speech
