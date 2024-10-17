@@ -6,9 +6,8 @@ from dotenv import find_dotenv, load_dotenv
 from transformers import pipeline
 
 load_dotenv(find_dotenv())
-OPENAI_API_KEY = "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"
-openai.api_key=OPENAI_API_KEY
-HUGGINGFACEHUB_API_TOKEN = "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"
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+HUGGINGFACEHUB_API_TOKEN = os.getenv('HUGGINGFACE_API_KEY')
 
 
 def img2text(url):
